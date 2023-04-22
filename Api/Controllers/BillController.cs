@@ -1,6 +1,7 @@
 ﻿using Application.Commands.Bills;
 using Application.Dtos.Bills;
 using AutoMapper;
+using Domain.Entities.Bills;
 using Domain.Repositories.Bills;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ namespace Api.Controllers
     {
       var bills = repository.GetAll().ToList();
       var result = _mapper.Map<IEnumerable<BillDto>>(bills);
-      return Ok(result);
+      return Ok(result.OrderByDescending(x => x.Payment));
     }
 
     [HttpGet("{id}")]
