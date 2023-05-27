@@ -51,7 +51,7 @@ namespace Infra.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bills",
+                name: "Bill",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -62,11 +62,11 @@ namespace Infra.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bills", x => x.Id);
+                    table.PrimaryKey("PK_Bill", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "Category",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -74,7 +74,7 @@ namespace Infra.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.PrimaryKey("PK_Category", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -184,30 +184,50 @@ namespace Infra.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BillItems",
+                name: "SubCategory",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Recurring = table.Column<bool>(type: "bit", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubCategory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SubCategory_Category_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BillItem",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Description = table.Column<string>(type: "varchar(200)", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BillItems", x => x.Id);
+                    table.PrimaryKey("PK_BillItem", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BillItems_Bills_BillId",
+                        name: "FK_BillItem_Bill_BillId",
                         column: x => x.BillId,
-                        principalTable: "Bills",
+                        principalTable: "Bill",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BillItems_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
+                        name: "FK_BillItem_SubCategory_SubCategoryId",
+                        column: x => x.SubCategoryId,
+                        principalTable: "SubCategory",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -250,13 +270,18 @@ namespace Infra.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillItems_BillId",
-                table: "BillItems",
+                name: "IX_BillItem_BillId",
+                table: "BillItem",
                 column: "BillId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BillItems_CategoryId",
-                table: "BillItems",
+                name: "IX_BillItem_SubCategoryId",
+                table: "BillItem",
+                column: "SubCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubCategory_CategoryId",
+                table: "SubCategory",
                 column: "CategoryId");
         }
 
@@ -279,7 +304,7 @@ namespace Infra.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BillItems");
+                name: "BillItem");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -288,10 +313,13 @@ namespace Infra.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Bills");
+                name: "Bill");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "SubCategory");
+
+            migrationBuilder.DropTable(
+                name: "Category");
         }
     }
 }

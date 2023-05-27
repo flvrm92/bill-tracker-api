@@ -1,5 +1,6 @@
 ﻿using Application.Commands.Bills;
 using Application.Commands.Categories;
+using Application.Commands.SubCategories;
 using Domain.Entities;
 using Domain.Entities.Bills;
 using Domain.Repositories;
@@ -17,6 +18,7 @@ public static class RepositoryModule
     services.AddScoped(typeof(IRepository<Bill>), typeof(BaseRepository<Bill>));
     services.AddScoped(typeof(IRepository<BillItem>), typeof(BaseRepository<BillItem>));
     services.AddScoped(typeof(IBillRepository), typeof(BillRepository));
+    services.AddScoped(typeof(ISubCategoryRepository), typeof(SubCategoryRepository));
 
     return services;
   }
@@ -26,6 +28,10 @@ public static class RepositoryModule
     services.AddTransient(typeof(CreateUpdateBillCommandHandler), typeof(CreateUpdateBillCommandHandler));
     services.AddTransient(typeof(CreateUpdateCategoryCommandHandler), typeof(CreateUpdateCategoryCommandHandler));
     services.AddTransient(typeof(DeleteCategoryCommandHandler), typeof(DeleteCategoryCommandHandler));
+
+    services.AddTransient(typeof(CreateSubCategoryCommandHandler), typeof(CreateSubCategoryCommandHandler));
+    services.AddTransient(typeof(DeleteSubCategoryCommandHandler), typeof(DeleteSubCategoryCommandHandler));
+    services.AddTransient(typeof(UpdateSubCategoryCommandHandler), typeof(UpdateSubCategoryCommandHandler));
 
     return services;
   }

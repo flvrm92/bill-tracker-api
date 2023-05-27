@@ -8,7 +8,7 @@ namespace Infra.Configuration.Bills
   {
     public void Configure(EntityTypeBuilder<Bill> builder)
     {
-      builder.ToTable("Bills");
+      builder.ToTable("Bill");
 
       builder.HasKey(x => x.Id);
 
