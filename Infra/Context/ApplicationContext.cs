@@ -24,6 +24,7 @@ namespace Infra.Context
     public DbSet<Bill> Bills { get; set; }
     public DbSet<BillItem> BillItems { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<SubCategory> SubCategories { get; set; }
 
     #endregion
 

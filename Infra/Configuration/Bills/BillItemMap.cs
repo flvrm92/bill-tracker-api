@@ -8,7 +8,7 @@ namespace Infra.Configuration.Bills
   {
     public void Configure(EntityTypeBuilder<BillItem> builder)
     {
-      builder.ToTable("BillItems");
+      builder.ToTable("BillItem");
 
       builder.HasKey(x => x.Id);
 
@@ -25,10 +25,10 @@ namespace Infra.Configuration.Bills
         .HasForeignKey(s => s.BillId)
         .OnDelete(DeleteBehavior.Cascade);
 
-      builder.HasOne(s => s.Category)
+      builder.HasOne(s => s.SubCategory)
         .WithMany(s => s.BillItems)
-        .HasForeignKey(s => s.CategoryId)
-        .OnDelete(DeleteBehavior.Cascade);
+        .HasForeignKey(s => s.SubCategoryId)
+        .OnDelete(DeleteBehavior.Restrict);
     }
   }
 }

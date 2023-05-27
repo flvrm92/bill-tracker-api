@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories
 {
-  public class BaseRepository<T>: IRepository<T> where T: BaseEntity
+  public class BaseRepository<T>: IRepository<T> where T : BaseEntity
   {
     private readonly ApplicationContext _context;
 
