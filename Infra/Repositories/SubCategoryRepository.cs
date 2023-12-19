@@ -27,4 +27,12 @@ public class SubCategoryRepository : BaseRepository<SubCategory>, ISubCategoryRe
       .Include(s => s.Category)
       .FirstOrDefaultAsync(s => s.Id == id);
   }
+
+  public async Task<List<SubCategory>> GetByCategoryId(Guid id)
+  {
+    return await _context.SubCategories
+      .Include(s => s.Category)
+      .Where(s => s.CategoryId == id)
+      .ToListAsync();
+  }
 }
