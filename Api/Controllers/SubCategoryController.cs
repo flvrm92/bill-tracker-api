@@ -28,6 +28,18 @@ namespace Api.Controllers
       return Ok(result.OrderBy(x => x.Name));
     }
 
+    [HttpGet]
+    [Route("GetByCategoryId/{categoryId}")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<SubCategoryDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<SubCategoryDto>>> GetByCategoryId(Guid categoryId,
+      [FromServices] ISubCategoryRepository repository)
+    {
+      var subCategories = await repository.GetByCategoryId(categoryId);
+      var result = _mapper.Map<List<SubCategoryDto>>(subCategories);
+      return Ok(result.OrderBy(x => x.Name));
+    }
+
     [HttpGet("{id}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(SubCategory), StatusCodes.Status200OK)]
