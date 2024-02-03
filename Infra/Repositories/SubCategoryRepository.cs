@@ -4,14 +4,9 @@ using Infra.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories;
-public class SubCategoryRepository : BaseRepository<SubCategory>, ISubCategoryRepository
+public class SubCategoryRepository(ApplicationContext context) : BaseRepository<SubCategory>(context), ISubCategoryRepository
 {
-  private readonly ApplicationContext _context;
-
-  public SubCategoryRepository(ApplicationContext context) : base(context)
-  {
-    _context = context;
-  }
+  private readonly ApplicationContext _context = context;
 
   public new async Task<List<SubCategory>> GetAll()
   {

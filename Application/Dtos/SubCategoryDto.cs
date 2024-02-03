@@ -1,6 +1,6 @@
 ﻿
 namespace Application.Dtos;
-public class SubCategoryDto
+public record SubCategoryDto
 {
   public Guid? Id { get; set; }
   public string Name { get; set; }

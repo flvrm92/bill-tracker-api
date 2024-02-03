@@ -5,18 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories
 {
-  public class BaseRepository<T>: IRepository<T> where T : BaseEntity
+  public class BaseRepository<T>(ApplicationContext context) : IRepository<T> where T : BaseEntity
   {
-    private readonly ApplicationContext _context;
-
-    public BaseRepository(ApplicationContext context)
-    {
-      _context = context;
-    }
-
     public IQueryable<T> GetAll()
     {
-      return _context.Set<T>().AsQueryable();
+      return context.Set<T>().AsQueryable();
     }
 
     public async Task<T> GetById(Guid id)
@@ -26,22 +19,22 @@ namespace Infra.Repositories
 
     public async Task<T> Add(T entity)
     {
-      _context.Set<T>().Add(entity);
-      await _context.SaveChangesAsync();
+      context.Set<T>().Add(entity);
+      await context.SaveChangesAsync();
       return entity;
     }
 
     public async Task<T> Update(T entity)
     {
-      _context.Set<T>().Update(entity);
-      await _context.SaveChangesAsync();
+      context.Set<T>().Update(entity);
+      await context.SaveChangesAsync();
       return entity;
     }
 
     public async Task Delete(T entity)
     {
-      _context.Set<T>().Remove(entity);
-      await _context.SaveChangesAsync();
+      context.Set<T>().Remove(entity);
+      await context.SaveChangesAsync();
     }
   }
 }

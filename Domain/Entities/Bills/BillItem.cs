@@ -1,28 +1,20 @@
 ﻿namespace Domain.Entities.Bills;
-public class BillItem : BaseEntity
+public class BillItem(Guid billId, Guid subCategoryId, string description, decimal value)
+  : BaseEntity
 {
-    public BillItem(Guid billId, Guid subCategoryId, string description, decimal value)
-    {
-        BillId = billId;
-        SubCategoryId = subCategoryId;
-        Description = description;
-        Value = value;
-    }
+  public Guid BillId { get; private set; } = billId;
+  public virtual Bill Bill { get; private set; }
 
-    public Guid BillId { get; private set; }
-    public virtual Bill Bill { get; private set; }
+  public Guid SubCategoryId { get; private set; } = subCategoryId;
+  public virtual SubCategory SubCategory { get; private set; }
 
-    public Guid SubCategoryId { get; private set; }
-    public virtual SubCategory SubCategory { get; private set; }
+  public string Description { get; private set; } = description;
+  public decimal Value { get; private set; } = value;
 
-    public string Description { get; private set; }
-    public decimal Value { get; private set; }
-
-    public void Update(Guid billId, Guid subCategoryId, string description, decimal value)
-    {
-        BillId = billId;
-        SubCategoryId = subCategoryId;
-        Description = description;
-        Value = value;
-    }
+  public void Update(Guid subCategoryId, string description, decimal value)
+  {
+    SubCategoryId = subCategoryId;
+    Description = description;
+    Value = value;
+  }
 }

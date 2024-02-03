@@ -1,7 +1,7 @@
 ﻿using Application.Commands.Bills;
+using Application.Commands.Bills.Inputs;
 using Application.Dtos.Bills;
 using AutoMapper;
-using Domain.Entities.Bills;
 using Domain.Repositories.Bills;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,23 +9,17 @@ namespace Api.Controllers
 {
   [ApiController]
   [Route("[controller]")]
-  public class BillController : Controller
+  public class BillController(IMapper mapper) : Controller
   {
-    private readonly IMapper _mapper;
-    public BillController(IMapper mapper)
-    {
-      _mapper = mapper;
-    }
-
     [HttpGet]
     [Produces("application/json")]
     [ProducesResponseType(typeof(IEnumerable<BillDto>), StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<BillDto>> Get(
+    public async Task<ActionResult<IEnumerable<BillDto>>> Get(
       [FromServices] IBillRepository repository)
     {
-      var bills = repository.GetAll().ToList();
-      var result = _mapper.Map<IEnumerable<BillDto>>(bills);
-      return Ok(result.OrderByDescending(x => x.Payment));
+      var bills = await repository.GetAll();
+      var result = mapper.Map<IEnumerable<BillDto>>(bills);
+      return Ok(result.OrderByDescending(x => x.PaymentMonth));
     }
 
     [HttpGet("{id}")]
@@ -35,7 +29,7 @@ namespace Api.Controllers
       [FromServices] IBillRepository repository)
     {
       var bill = await repository.GetById(id);
-      var result = _mapper.Map<BillDto>(bill);
+      var result = mapper.Map<BillDto>(bill);
       return Ok(result);
     }
 
@@ -44,16 +38,14 @@ namespace Api.Controllers
     [ProducesResponseType(typeof(BillDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BillDto>> Post(
-      [FromBody] BillDto command,
-      [FromServices] CreateUpdateBillCommandHandler handler)
+      [FromBody] CreateBillInput command,
+      [FromServices] CreateBillCommandHandler handler)
     {
-      if (!ModelState.IsValid)
-        return BadRequest(ModelState);
-
+      if (!ModelState.IsValid) return BadRequest(ModelState);
       try
       {
         var result = await handler.Handle(command);
-        return Ok(_mapper.Map<BillDto>(result.Data));
+        return Ok(mapper.Map<BillDto>(result.Data));
       }
       catch (Exception)
       {
@@ -61,24 +53,26 @@ namespace Api.Controllers
       }
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(BillDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BillDto>> Put(
-      [FromBody] BillDto command,
-      [FromServices] CreateUpdateBillCommandHandler handler)
+    public async Task<ActionResult<UpdateBillInput>> Put(Guid id,
+      [FromBody] UpdateBillInput command,
+      [FromServices] UpdateBillCommandHandler handler)
     {
       if (!ModelState.IsValid)
         return BadRequest(ModelState);
 
       try
       {
+        command.SetId(id);
         var result = await handler.Handle(command);
-        return Ok(_mapper.Map<BillDto>(result.Data));
+        return Ok(mapper.Map<BillDto>(result.Data));
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        var msg = ex.Message;
         return BadRequest(new { message = "There was a problem to update the bill" });
       }
     }

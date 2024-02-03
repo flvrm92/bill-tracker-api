@@ -4,49 +4,37 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace Infra.Context
+namespace Infra.Context;
+public class ApplicationContext(
+  DbContextOptions<ApplicationContext> options,
+  IConfiguration configuration)
+  : DbContext(options)
 {
-  public class ApplicationContext: IdentityDbContext
+  #region dbSets
+  public DbSet<Bill> Bills { get; set; }
+  public DbSet<BillItem> BillItems { get; set; }
+  public DbSet<Category> Categories { get; set; }
+  public DbSet<SubCategory> SubCategories { get; set; }
+
+  #endregion
+
+  protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
   {
+    if (optionsBuilder.IsConfigured)
+      return;
 
-    private readonly IConfiguration _configuration;
-
-    public ApplicationContext(
-      DbContextOptions<ApplicationContext> options,
-      IConfiguration configuration): base (options)
+    SqlConnection connection = new()
     {
-      _configuration = configuration;
-    }
+      ConnectionString = configuration.GetConnectionString("Default") ?? string.Empty
+    };
 
-    #region dbSets
-    public DbSet<Bill> Bills { get; set; }
-    public DbSet<BillItem> BillItems { get; set; }
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<SubCategory> SubCategories { get; set; }
-
-    #endregion
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-      if (optionsBuilder.IsConfigured)
-        return;
-
-      SqlConnection connection = new()
-      {
-        ConnectionString = _configuration.GetConnectionString("Default")
-      };
-
-      optionsBuilder.UseSqlServer(connection, x => x.MigrationsAssembly("Infra"));
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-      base.OnModelCreating(modelBuilder);
-      modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-    }
-
+    optionsBuilder.UseSqlServer(connection, x => x.MigrationsAssembly("Infra"));
   }
 
+  protected override void OnModelCreating(ModelBuilder modelBuilder)
+  {
+    base.OnModelCreating(modelBuilder);
+    modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+  }
 }

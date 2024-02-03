@@ -1,29 +1,26 @@
-﻿using Domain.Entities;
+﻿using Application.Commands.Categories.Inputs;
+using Domain.Entities;
 using Domain.Repositories;
 
 namespace Application.Commands.Categories;
-public class CreateUpdateCategoryCommandHandler: ICommandHandler<Category, Category>
+public class CreateUpdateCategoryCommandHandler(IRepository<Category> repository) : ICommandHandler<CreateUpdateCategoryInput, Category>
 {
-  private readonly IRepository<Category> _repository;
-
-  public CreateUpdateCategoryCommandHandler(IRepository<Category> repository)
+  public async Task<ICommandResult<Category>> Handle(CreateUpdateCategoryInput command)
   {
-    _repository = repository;
-  }
-
-  public async Task<ICommandResult<Category>> Handle(Category command)
-  {
-    var category = await _repository.GetById(command.Id);
-    if (category is not null)
+    if (command.Id is not null)
     {
+      var category = await repository.GetById(command.Id.Value);
+      if (category is null)
+        return new CommandResult<Category>(false, "Category not found", null);
+      
       category.Update(command.Name);
-      await _repository.Update(category);
+      await repository.Update(category);
 
       return new CommandResult<Category>(true, "Category updated successfully", category);
     }
 
     var newCategory = new Category(command.Name);
-    await _repository.Add(newCategory);
+    await repository.Add(newCategory);
 
     return new CommandResult<Category>(true, "Category created successfully", newCategory);
   }

@@ -1,4 +1,5 @@
 ﻿using Application.Commands.Categories;
+using Application.Commands.Categories.Inputs;
 using Application.Dtos;
 using AutoMapper;
 using Domain.Entities;
@@ -9,15 +10,8 @@ namespace Api.Controllers
 {
   [ApiController]
   [Route("[controller]")]
-  public class CategoryController : Controller
+  public class CategoryController(IMapper mapper) : Controller
   {
-    private readonly IMapper _mapper;
-
-    public CategoryController(IMapper mapper)
-    {
-      _mapper = mapper;
-    }
-
     [HttpGet]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
@@ -25,7 +19,7 @@ namespace Api.Controllers
       [FromServices] IRepository<Category> repository)
     {
       var categories = repository.GetAll().ToList();
-      var result = _mapper.Map<List<CategoryDto>>(categories);
+      var result = mapper.Map<List<CategoryDto>>(categories);
       return Ok(result.OrderBy(x => x.Name));
     }
 
@@ -36,15 +30,15 @@ namespace Api.Controllers
       [FromServices] IRepository<Category> repository)
     {
       var category = await repository.GetById(id);
-      return Ok(_mapper.Map<CategoryDto>(category));
+      return Ok(mapper.Map<CategoryDto>(category));
     }
 
     [HttpPost]
     [Produces("application/json")]
     [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<Category>> Post(
-      [FromBody] Category command,
+    public async Task<ActionResult<CategoryDto>> Post(
+      [FromBody] CreateUpdateCategoryInput command,
       [FromServices] CreateUpdateCategoryCommandHandler handler)
     {
       if (!ModelState.IsValid)
@@ -54,7 +48,7 @@ namespace Api.Controllers
       {
         var result = await handler.Handle(command);
         if (result is not null && result.Success)
-          return Ok(_mapper.Map<CategoryDto>(result.Data));
+          return Ok(mapper.Map<CategoryDto>(result.Data));
 
         return BadRequest(new { message = result?.Message });
       }
@@ -69,7 +63,7 @@ namespace Api.Controllers
     [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Category>> Put(Guid id,
-      [FromBody] CategoryDto dto,
+      [FromBody] CreateUpdateCategoryInput command,
       [FromServices] CreateUpdateCategoryCommandHandler handler)
     {
       if (!ModelState.IsValid)
@@ -79,10 +73,9 @@ namespace Api.Controllers
       {
         if (id == Guid.Empty) return BadRequest(new { message = "Id is required" });
 
-        dto.Id = id;
-        var command = _mapper.Map<Category>(dto);
+        command.SetId(id);
         var result = await handler.Handle(command);
-        return Ok(_mapper.Map<CategoryDto>(result.Data));
+        return Ok(mapper.Map<CategoryDto>(result.Data));
       }
       catch (Exception)
       {

@@ -2,26 +2,17 @@
 using Domain.Entities;
 using Domain.Repositories;
 
-namespace Application.Commands.Categories
+namespace Application.Commands.Categories;
+public class DeleteCategoryCommandHandler(IRepository<Category> repository) : ICommandHandler<DeleteDto, Category>
 {
-  public class DeleteCategoryCommandHandler : ICommandHandler<DeleteDto, Category>
+  public async Task<ICommandResult<Category>> Handle(DeleteDto dto)
   {
-    private readonly IRepository<Category> _repository;
+    var category = await repository.GetById(dto.Id);
+    if (category is null)
+      return new CommandResult<Category>(false, "Category not found", null);
 
-    public DeleteCategoryCommandHandler(IRepository<Category> repository)
-    {
-      _repository = repository;
-    }
+    await repository.Delete(category);
 
-    public async Task<ICommandResult<Category>> Handle(DeleteDto dto)
-    {
-      var category = await _repository.GetById(dto.Id);
-      if (category is null)
-        return new CommandResult<Category>(false, "Category not found", null);
-
-      await _repository.Delete(category);
-
-      return new CommandResult<Category>(true, "Category deleted successfully", null);
-    }
+    return new CommandResult<Category>(true, "Category deleted successfully", null);
   }
 }
