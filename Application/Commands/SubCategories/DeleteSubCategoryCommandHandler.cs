@@ -2,26 +2,17 @@
 using Domain.Entities;
 using Domain.Repositories;
 
-namespace Application.Commands.SubCategories
+namespace Application.Commands.SubCategories;
+public class DeleteSubCategoryCommandHandler(ISubCategoryRepository subCategoryRepository) : ICommandHandler<DeleteDto, SubCategory>
 {
-  public class DeleteSubCategoryCommandHandler: ICommandHandler<DeleteDto, SubCategory>
+  public async Task<ICommandResult<SubCategory>> Handle(DeleteDto dto)
   {
-    private readonly ISubCategoryRepository _subCategoryRepository;
-    
-    public DeleteSubCategoryCommandHandler(ISubCategoryRepository subCategoryRepository)
-    {
-      _subCategoryRepository = subCategoryRepository;
-    }
+    var subCategory = await subCategoryRepository.GetById(dto.Id);
+    if (subCategory is null)
+      return new CommandResult<SubCategory>(false, "SubCategory not found", null);
 
-    public async Task<ICommandResult<SubCategory>> Handle(DeleteDto dto)
-    {
-      var subCategory = await _subCategoryRepository.GetById(dto.Id);
-      if (subCategory is null)
-        return new CommandResult<SubCategory>(false, "SubCategory not found", null);
+    await subCategoryRepository.Delete(subCategory);
 
-      await _subCategoryRepository.Delete(subCategory);
-
-      return new CommandResult<SubCategory>(true, "SubCategory deleted successfully", null);
-    }
+    return new CommandResult<SubCategory>(true, "SubCategory deleted successfully", null);
   }
 }

@@ -1,29 +1,15 @@
 ﻿namespace Domain.Entities.Bills;
 
-public class Bill : BaseEntity
+public class Bill(DateOnly paymentMonth, decimal totalIncoming) : BaseEntity
 {
-  public Bill(Guid userId, DateTime payment, decimal total, decimal totalIncoming)
+  public DateOnly PaymentMonth { get; private set; } = paymentMonth;
+  public decimal TotalIncoming { get; private set; } = totalIncoming;
+
+  public ICollection<BillItem> BillItems { get; private set; } = new List<BillItem>();
+
+  public void Update(DateOnly paymentMonth, decimal totalIncoming)
   {
-    UserId = userId;
-    Payment = payment;
-    Total = total;
-    TotalIncoming = totalIncoming;
-
-    BillItems = new List<BillItem>();
-  }
-
-  public Guid UserId { get; private set; }
-  public DateTime Payment { get; private set; }
-  public decimal Total { get; private set; }
-  public decimal TotalIncoming { get; private set; }
-
-  public ICollection<BillItem> BillItems { get; private set; }
-
-  public void Update(Guid userId, DateTime payment, decimal total, decimal totalIncoming)
-  {
-    UserId = userId;
-    Payment = payment;
-    Total = total;
+    PaymentMonth = paymentMonth;
     TotalIncoming = totalIncoming;
   }
 

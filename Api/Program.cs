@@ -22,8 +22,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.RegisterRepositories();
 builder.Services.RegisterHandlers();
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-  .AddEntityFrameworkStores<ApplicationContext>();
+// TODO: reactive this
+//builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+//  .AddEntityFrameworkStores<ApplicationContext>();
 
 builder.Services.AddDbContext<ApplicationContext>();
 

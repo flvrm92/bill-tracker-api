@@ -25,14 +25,15 @@ public static class RepositoryModule
 
   public static IServiceCollection RegisterHandlers(this IServiceCollection services)
   {
-    services.AddTransient(typeof(CreateUpdateBillCommandHandler), typeof(CreateUpdateBillCommandHandler));
+    services.AddTransient(typeof(CreateBillCommandHandler), typeof(CreateBillCommandHandler));
+    services.AddTransient(typeof(UpdateBillCommandHandler), typeof(UpdateBillCommandHandler));
     services.AddTransient(typeof(CreateUpdateCategoryCommandHandler), typeof(CreateUpdateCategoryCommandHandler));
     services.AddTransient(typeof(DeleteCategoryCommandHandler), typeof(DeleteCategoryCommandHandler));
 
     services.AddTransient(typeof(CreateSubCategoryCommandHandler), typeof(CreateSubCategoryCommandHandler));
     services.AddTransient(typeof(DeleteSubCategoryCommandHandler), typeof(DeleteSubCategoryCommandHandler));
     services.AddTransient(typeof(UpdateSubCategoryCommandHandler), typeof(UpdateSubCategoryCommandHandler));
-
+    
     return services;
   }
 }

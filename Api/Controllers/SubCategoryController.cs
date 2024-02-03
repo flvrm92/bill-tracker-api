@@ -1,4 +1,5 @@
 ﻿using Application.Commands.SubCategories;
+using Application.Commands.SubCategories.Inputs;
 using Application.Dtos;
 using AutoMapper;
 using Domain.Entities;
@@ -7,16 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
-  [ApiController]
+    [ApiController]
   [Route("[controller]")]
-  public class SubCategoryController : Controller
+  public class SubCategoryController(IMapper mapper) : Controller
   {
-    private readonly IMapper _mapper;
-    public SubCategoryController(IMapper mapper)
-    {
-      _mapper = mapper;
-    }
-
     [HttpGet]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<SubCategoryDto>), StatusCodes.Status200OK)]
@@ -24,7 +19,7 @@ namespace Api.Controllers
       [FromServices] ISubCategoryRepository repository)
     {
       var subCategories = await repository.GetAll();
-      var result = _mapper.Map<List<SubCategoryDto>>(subCategories);
+      var result = mapper.Map<List<SubCategoryDto>>(subCategories);
       return Ok(result.OrderBy(x => x.Name));
     }
 
@@ -36,7 +31,7 @@ namespace Api.Controllers
       [FromServices] ISubCategoryRepository repository)
     {
       var subCategories = await repository.GetByCategoryId(categoryId);
-      var result = _mapper.Map<List<SubCategoryDto>>(subCategories);
+      var result = mapper.Map<List<SubCategoryDto>>(subCategories);
       return Ok(result.OrderBy(x => x.Name));
     }
 
@@ -54,7 +49,7 @@ namespace Api.Controllers
     [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<SubCategory>> Post(
-      [FromBody] SubCategory command,
+      [FromBody] CreateUpdateSubCategoryInput command,
       [FromServices] CreateSubCategoryCommandHandler handler)
     {
       if (!ModelState.IsValid)
@@ -64,7 +59,7 @@ namespace Api.Controllers
       {
         var result = await handler.Handle(command);
         if (result is not null && result.Success)
-          return Ok(_mapper.Map<SubCategoryDto>(result.Data));
+          return Ok(mapper.Map<SubCategoryDto>(result.Data));
 
         return BadRequest(new { message = result?.Message });
       }
@@ -79,7 +74,7 @@ namespace Api.Controllers
     [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Category>> Put(Guid id,
-      [FromBody] SubCategoryUpdateCommand command,
+      [FromBody] CreateUpdateSubCategoryInput command,
       [FromServices] UpdateSubCategoryCommandHandler handler)
     {
       if (!ModelState.IsValid)
@@ -89,9 +84,9 @@ namespace Api.Controllers
       {
         if (id == Guid.Empty) return BadRequest(new { message = "Id is required" });
 
-        command.Id = id;
+        command.SetId(id);
         var result = await handler.Handle(command);
-        return Ok(_mapper.Map<SubCategoryDto>(result.Data));
+        return Ok(mapper.Map<SubCategoryDto>(result.Data));
       }
       catch (Exception)
       {

@@ -12,15 +12,9 @@ namespace Infra.Configuration.Bills
 
       builder.HasKey(x => x.Id);
 
-      builder.Property(x => x.UserId)
+      builder.Property(x => x.PaymentMonth)
+        .HasColumnType("date")
         .IsRequired();
-
-      builder.Property(x => x.Payment)
-        .IsRequired();
-
-      builder.Property(x => x.Total)
-        .IsRequired()
-        .HasColumnType("decimal(18,2)");
 
       builder.Property(x => x.TotalIncoming)
         .HasColumnType("decimal(18,2)");
