@@ -9,10 +9,10 @@ namespace Application.Commands.Bills;
 public class UpdateBillCommandHandler(
   IBillRepository repository,
   IRepository<BillItem> billItemRepository) 
-  : ICommandHandler<UpdateBillInput, Bill>
+  : ICommandHandler<CreateUpdateBillInput, Bill>
 {
 
-  public async Task<ICommandResult<Bill>> Handle(UpdateBillInput command)
+  public async Task<ICommandResult<Bill>> Handle(CreateUpdateBillInput command)
   {
     if (command.Id is null) return new CommandResult<Bill>(false, "Id is required", null);
     var bill = await repository.GetById(command.Id.Value);
@@ -35,7 +35,7 @@ public class UpdateBillCommandHandler(
       if (billItem is null)
       {
         var newItem = await billItemRepository.Add(new BillItem(bill.Id, dto.SubCategoryId, dto.Description, dto.Value));
-        dto.Id = newItem.Id;
+        dto.SetId(newItem.Id);
       }
       else billItem.Update(dto.SubCategoryId, dto.Description, dto.Value);
     }
