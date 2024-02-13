@@ -1,5 +1,5 @@
 ﻿namespace Application.Dtos;
-public record DeleteDto
+public record DeleteDto (Guid Id)
 {
-  public Guid Id { get; set; }
+  public Guid Id { get; } = Id;
 }

@@ -27,6 +27,8 @@ public static class RepositoryModule
   {
     services.AddTransient(typeof(CreateBillCommandHandler), typeof(CreateBillCommandHandler));
     services.AddTransient(typeof(UpdateBillCommandHandler), typeof(UpdateBillCommandHandler));
+    services.AddTransient(typeof(DeleteBillCommandHandler), typeof(DeleteBillCommandHandler));
+
     services.AddTransient(typeof(CreateUpdateCategoryCommandHandler), typeof(CreateUpdateCategoryCommandHandler));
     services.AddTransient(typeof(DeleteCategoryCommandHandler), typeof(DeleteCategoryCommandHandler));
 

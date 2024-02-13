@@ -93,7 +93,7 @@ namespace Api.Controllers
     {
       try
       {
-        var result = await handler.Handle(new DeleteDto { Id = id });
+        var result = await handler.Handle(new DeleteDto(id));
         return Ok(result);
       }
       catch (Exception)

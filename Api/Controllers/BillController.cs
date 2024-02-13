@@ -1,5 +1,6 @@
 ﻿using Application.Commands.Bills;
 using Application.Commands.Bills.Inputs;
+using Application.Dtos;
 using Application.Dtos.Bills;
 using AutoMapper;
 using Domain.Repositories.Bills;
@@ -38,7 +39,7 @@ namespace Api.Controllers
     [ProducesResponseType(typeof(BillDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BillDto>> Post(
-      [FromBody] CreateBillInput command,
+      [FromBody] CreateUpdateBillInput command,
       [FromServices] CreateBillCommandHandler handler)
     {
       if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -57,8 +58,8 @@ namespace Api.Controllers
     [Produces("application/json")]
     [ProducesResponseType(typeof(BillDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UpdateBillInput>> Put(Guid id,
-      [FromBody] UpdateBillInput command,
+    public async Task<ActionResult<CreateUpdateBillInput>> Put(Guid id,
+      [FromBody] CreateUpdateBillInput command,
       [FromServices] UpdateBillCommandHandler handler)
     {
       if (!ModelState.IsValid)
@@ -70,32 +71,30 @@ namespace Api.Controllers
         var result = await handler.Handle(command);
         return Ok(mapper.Map<BillDto>(result.Data));
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        var msg = ex.Message;
         return BadRequest(new { message = "There was a problem to update the bill" });
       }
     }
 
-    //[HttpDelete]
-    //[Produces("application/json")]
-    //public async Task<ActionResult<Bill>> Delete(
-    //  [FromBody] BillDto command,
-    //  [FromServices] DeleteBillCommandHandler handler)
-    //{
-    //  if (!ModelState.IsValid)
-    //    return BadRequest(ModelState);
-
-    //  try
-    //  {
-    //    var result = await handler.Handle(command);
-    //    return Ok(result);
-    //  }
-    //  catch (Exception)
-    //  {
-    //    return BadRequest(new { message = "There was a problem to delete the bill" });
-    //  }
-    //}
+    [HttpDelete("{id}")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<BillDto>> Delete(
+      [FromRoute] Guid id,
+      [FromServices] DeleteBillCommandHandler handler)
+    {
+      try
+      {
+        var result = await handler.Handle(new DeleteDto(id));
+        return Ok(result);
+      }
+      catch (Exception)
+      {
+        return BadRequest(new { message = "There was a problem to delete the bill" });
+      }
+    }
 
   }
 }
