@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
-    [ApiController]
+  [ApiController]
+  [Produces("application/json")]
   [Route("[controller]")]
   public class SubCategoryController(IMapper mapper) : Controller
   {
     [HttpGet]
-    [Produces("application/json")]
     [ProducesResponseType(typeof(List<SubCategoryDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<SubCategoryDto>>> Get(
       [FromServices] ISubCategoryRepository repository)
@@ -25,7 +25,6 @@ namespace Api.Controllers
 
     [HttpGet]
     [Route("GetByCategoryId/{categoryId}")]
-    [Produces("application/json")]
     [ProducesResponseType(typeof(List<SubCategoryDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<SubCategoryDto>>> GetByCategoryId(Guid categoryId,
       [FromServices] ISubCategoryRepository repository)
@@ -35,8 +34,7 @@ namespace Api.Controllers
       return Ok(result.OrderBy(x => x.Name));
     }
 
-    [HttpGet("{id}")]
-    [Produces("application/json")]
+    [HttpGet("{id}")]    
     [ProducesResponseType(typeof(SubCategory), StatusCodes.Status200OK)]
     public async Task<ActionResult<SubCategory>> Get(Guid id,
       [FromServices] ISubCategoryRepository repository)
@@ -44,8 +42,7 @@ namespace Api.Controllers
       return Ok(await repository.GetById(id));
     }
 
-    [HttpPost]
-    [Produces("application/json")]
+    [HttpPost]    
     [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<SubCategory>> Post(
@@ -65,12 +62,11 @@ namespace Api.Controllers
       }
       catch (Exception)
       {
-        return BadRequest(new { message = "There was a problem to create the subcategory" });
+        return BadRequest(new { message = $"{ModelBinderFactory} There was a problem to create the subcategory" });
       }
     }
 
-    [HttpPut("{id}")]
-    [Produces("application/json")]
+    [HttpPut("{id}")]    
     [ProducesResponseType(typeof(SubCategoryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Category>> Put(Guid id,
@@ -86,7 +82,10 @@ namespace Api.Controllers
 
         command.SetId(id);
         var result = await handler.Handle(command);
-        return Ok(mapper.Map<SubCategoryDto>(result.Data));
+        if (result is not null && result.Success)
+          return Ok(mapper.Map<SubCategoryDto>(result.Data));
+
+        return BadRequest(new { message = result?.Message });
       }
       catch (Exception)
       {
@@ -94,8 +93,7 @@ namespace Api.Controllers
       }
     }
 
-    [HttpDelete("{id}")]
-    [Produces("application/json")]
+    [HttpDelete("{id}")]    
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<SubCategory>> Delete(
@@ -105,7 +103,10 @@ namespace Api.Controllers
       try
       {
         var result = await handler.Handle(new DeleteDto(id));
-        return Ok(result);
+
+        if (result is not null && result.Success) return Ok(result);
+
+        return BadRequest(new { message = result?.Message });
       }
       catch (Exception)
       {
