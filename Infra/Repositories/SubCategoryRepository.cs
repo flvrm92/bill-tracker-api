@@ -16,11 +16,11 @@ public class SubCategoryRepository(ApplicationContext context) : BaseRepository<
       .ToListAsync();
   }
 
-  public new async Task<SubCategory> GetById(Guid id)
+  public async Task<SubCategory> GetById(Guid id, CancellationToken cancellationToken)
   {
     return await _context.SubCategories
       .Include(s => s.Category)
-      .FirstOrDefaultAsync(s => s.Id == id);
+      .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
   }
 
   public async Task<List<SubCategory>> GetByCategoryId(Guid id)

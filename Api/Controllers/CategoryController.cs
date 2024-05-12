@@ -20,6 +20,7 @@ namespace Api.Controllers
     {
       var categories = repository.GetAll().ToList();
       var result = mapper.Map<List<CategoryDto>>(categories);
+      if (result is null || result.Count <= 0) return NotFound();
       return Ok(result.OrderBy(x => x.Name));
     }
 
@@ -75,7 +76,10 @@ namespace Api.Controllers
 
         command.SetId(id);
         var result = await handler.Handle(command);
-        return Ok(mapper.Map<CategoryDto>(result.Data));
+        if (result is not null && result.Success) 
+          return Ok(mapper.Map<CategoryDto>(result.Data));
+
+        return BadRequest(new { message = result?.Message });
       }
       catch (Exception)
       {
@@ -94,7 +98,9 @@ namespace Api.Controllers
       try
       {
         var result = await handler.Handle(new DeleteDto(id));
-        return Ok(result);
+        if (result is not null && result.Success) return Ok(result);
+
+        return BadRequest(new { message = result?.Message });
       }
       catch (Exception)
       {

@@ -3,10 +3,14 @@ using Domain.Entities;
 using Domain.Repositories;
 
 namespace Application.Commands.Categories;
-public class CreateUpdateCategoryCommandHandler(IRepository<Category> repository) : ICommandHandler<CreateUpdateCategoryInput, Category>
+public class CreateUpdateCategoryCommandHandler(IRepository<Category> repository) 
+  : ICommandHandler<CreateUpdateCategoryInput, Category>
 {
   public async Task<ICommandResult<Category>> Handle(CreateUpdateCategoryInput command)
   {
+    if (AlreadyExists(command.Name, command.Id)) 
+      return new CommandResult<Category>(false, "Category already exists", null);
+
     if (command.Id is not null)
     {
       var category = await repository.GetById(command.Id.Value);
@@ -23,5 +27,12 @@ public class CreateUpdateCategoryCommandHandler(IRepository<Category> repository
     await repository.Add(newCategory);
 
     return new CommandResult<Category>(true, "Category created successfully", newCategory);
+  }
+
+  private bool AlreadyExists(string name, Guid? id)
+  {
+    return id is null 
+      ? repository.GetAll().Any(x => x.Name == name) 
+      : repository.GetAll().Any(x => x.Name == name && x.Id != id);
   }
 }
