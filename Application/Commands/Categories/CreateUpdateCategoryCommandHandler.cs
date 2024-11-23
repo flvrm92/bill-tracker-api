@@ -3,7 +3,7 @@ using Domain.Entities;
 using Domain.Repositories;
 
 namespace Application.Commands.Categories;
-public class CreateUpdateCategoryCommandHandler(IRepository<Category> repository) 
+public sealed class CreateUpdateCategoryCommandHandler(IRepository<Category> repository) 
   : ICommandHandler<CreateUpdateCategoryInput, Category>
 {
   public async Task<ICommandResult<Category>> Handle(CreateUpdateCategoryInput command)

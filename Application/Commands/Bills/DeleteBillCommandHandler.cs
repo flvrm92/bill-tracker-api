@@ -3,7 +3,7 @@ using Domain.Entities.Bills;
 using Domain.Repositories.Bills;
 
 namespace Application.Commands.Bills;
-public class DeleteBillCommandHandler(IBillRepository repository) : ICommandHandler<DeleteDto, Bill>
+public sealed class DeleteBillCommandHandler(IBillRepository repository) : ICommandHandler<DeleteDto, Bill>
 {
   public async Task<ICommandResult<Bill>> Handle(DeleteDto command)
   {

@@ -12,7 +12,6 @@ public class MapProfile: Profile
     CreateMap<BillDto, Bill>().ReverseMap();
     CreateMap<BillItemDto, BillItem>().ReverseMap();
     CreateMap<CategoryDto, Category>().ReverseMap();
-    CreateMap<SubCategoryDto, SubCategory>()
-      .ReverseMap();
+    CreateMap<SubCategoryDto, SubCategory>().ReverseMap();
   }
 }

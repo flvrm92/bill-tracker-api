@@ -4,7 +4,7 @@ using Domain.Repositories;
 using Domain.Repositories.Bills;
 
 namespace Application.Commands.Bills;
-public class CreateBillCommandHandler(IBillRepository repository, IRepository<BillItem> billItemRepository) 
+public sealed class CreateBillCommandHandler(IBillRepository repository, IRepository<BillItem> billItemRepository) 
   : ICommandHandler<CreateUpdateBillInput, Bill>
 {
   public async Task<ICommandResult<Bill>> Handle(CreateUpdateBillInput command)
