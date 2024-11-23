@@ -44,7 +44,7 @@ public class CategoryControllerTests
     var categoryDtoList = new List<CategoryDto> { new() { Name = "Test 1" }, new() { Name = "Test 2" } };
 
     categoryRepositoryMock.Setup(x => x.GetAll()).Returns(categoryList.AsQueryable);
-    mapperMock.Setup(x => x.Map<List<CategoryDto>>(It.IsAny<List<Category>>())).Returns(categoryDtoList);
+    mapperMock.Setup(x => x.Map<IReadOnlyCollection<CategoryDto>>(It.IsAny<List<Category>>())).Returns(categoryDtoList);
 
     var controller = new CategoryController(mapperMock.Object)
     {

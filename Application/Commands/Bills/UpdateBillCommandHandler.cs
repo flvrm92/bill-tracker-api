@@ -6,7 +6,7 @@ using Domain.Repositories.Bills;
 
 namespace Application.Commands.Bills;
 
-public class UpdateBillCommandHandler(
+public sealed class UpdateBillCommandHandler(
   IBillRepository repository,
   IRepository<BillItem> billItemRepository) 
   : ICommandHandler<CreateUpdateBillInput, Bill>

@@ -14,23 +14,23 @@ namespace Api.Controllers
   public class SubCategoryController(IMapper mapper) : Controller
   {
     [HttpGet]
-    [ProducesResponseType(typeof(List<SubCategoryDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<SubCategoryDto>>> Get(
+    [ProducesResponseType(typeof(IReadOnlyCollection<SubCategoryDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyCollection<SubCategoryDto>>> Get(
       [FromServices] ISubCategoryRepository repository)
     {
       var subCategories = await repository.GetAll();
-      var result = mapper.Map<List<SubCategoryDto>>(subCategories);
+      var result = mapper.Map<IReadOnlyCollection<SubCategoryDto>>(subCategories);
       return Ok(result.OrderBy(x => x.Name));
     }
 
     [HttpGet]
     [Route("GetByCategoryId/{categoryId}")]
-    [ProducesResponseType(typeof(List<SubCategoryDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<SubCategoryDto>>> GetByCategoryId(Guid categoryId,
+    [ProducesResponseType(typeof(IReadOnlyCollection<SubCategoryDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyCollection<SubCategoryDto>>> GetByCategoryId(Guid categoryId,
       [FromServices] ISubCategoryRepository repository)
     {
       var subCategories = await repository.GetByCategoryId(categoryId);
-      var result = mapper.Map<List<SubCategoryDto>>(subCategories);
+      var result = mapper.Map<IReadOnlyCollection<SubCategoryDto>>(subCategories);
       return Ok(result.OrderBy(x => x.Name));
     }
 

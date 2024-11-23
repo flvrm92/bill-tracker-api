@@ -14,7 +14,7 @@ public static class RepositoryModule
 {
   public static IServiceCollection RegisterRepositories(this IServiceCollection services)
   {
-    services.AddScoped(typeof(IRepository<Category>), typeof(BaseRepository<Category>));
+    services.AddScoped<IRepository<Category>, BaseRepository<Category>>();
     services.AddScoped(typeof(IRepository<Bill>), typeof(BaseRepository<Bill>));
     services.AddScoped(typeof(IRepository<BillItem>), typeof(BaseRepository<BillItem>));
     services.AddScoped(typeof(IBillRepository), typeof(BillRepository));

@@ -14,12 +14,12 @@ namespace Api.Controllers
   {
     [HttpGet]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
-    public ActionResult<List<CategoryDto>> Get(
+    [ProducesResponseType(typeof(IReadOnlyCollection<CategoryDto>), StatusCodes.Status200OK)]
+    public ActionResult<IReadOnlyCollection<CategoryDto>> Get(
       [FromServices] IRepository<Category> repository)
     {
       var categories = repository.GetAll().ToList();
-      var result = mapper.Map<List<CategoryDto>>(categories);
+      var result = mapper.Map<IReadOnlyCollection<CategoryDto>>(categories);
       if (result is null || result.Count <= 0) return NotFound();
       return Ok(result.OrderBy(x => x.Name));
     }
