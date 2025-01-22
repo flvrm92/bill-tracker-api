@@ -2,7 +2,7 @@
 
 namespace Domain.Entities;
 
-public class SubCategory: BaseEntity
+public sealed class SubCategory: BaseEntity
 {
   public SubCategory(string name, Guid categoryId, bool recurring)
   {
@@ -17,9 +17,9 @@ public class SubCategory: BaseEntity
   public bool Recurring { get; private set; }
   
   public Guid CategoryId { get; private set;}
-  public virtual Category Category { get; private set; }
+  public Category Category { get; private set; }
 
-  public virtual ICollection<BillItem> BillItems { get; private set; }
+  public ICollection<BillItem> BillItems { get; private set; }
 
   public void Update(string name, Guid categoryId, bool recurring) 
     => (Name, CategoryId, Recurring) = (name, categoryId, recurring);

@@ -18,8 +18,7 @@ namespace Api.Controllers
     public ActionResult<IReadOnlyCollection<CategoryDto>> Get(
       [FromServices] IRepository<Category> repository)
     {
-      var categories = repository.GetAll().ToList();
-      var result = mapper.Map<IReadOnlyCollection<CategoryDto>>(categories);
+      var result = mapper.Map<IReadOnlyCollection<CategoryDto>>(repository.GetAll().ToList());
       if (result is null || result.Count <= 0) return NotFound();
       return Ok(result.OrderBy(x => x.Name));
     }
